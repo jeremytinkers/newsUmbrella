@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Card from "./Card";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function App() {
+  const [newsData, setNewsData] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      console.log("fetching...");
+      try {
+        const response = await axios.get("http://localhost:5000/results/");
+        setNewsData(response.data);
+        console.log(response.data);
+
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+    {
+      newsData.map((curData)=>{
+        return <Card title={curData.title}  url={curData.url}/>;
+      })
+    }
+      
     </div>
   );
 }
