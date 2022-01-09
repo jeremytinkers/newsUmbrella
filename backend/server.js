@@ -5,23 +5,19 @@ const app = express();
 const cors = require("cors");
 app.use(cors());
 
-const url = "https://www.theguardian.com/";
-
 app.get("/", function (req, res) {
-  res.json("Webscraper backend. Make relevant calls bro");
+  res.json("Webscraper backend running!");
 });
 
-app.get("/results", (req, res) => {
-  axios(url)
+app.get("/guardian", (req, res) => {
+  axios("https://www.theguardian.com/")
     .then((response) => {
       const html = response.data;
       const $ = cheerio.load(html);
       const newsItems = [];
 
-      $(".fc-item__title", html).each(function () {
-        //<-- cannot be a function expression
-        // console.log($(this));
-        const title = $(this).text();
+      $(".fc-item__title").each(function () {
+        const title = $(this).find(".js-headline-text").text();
         const url = $(this).find("a").attr("href");
         newsItems.push({
           title,
@@ -49,7 +45,7 @@ app.get("/bbcnews", (req, res) => {
         newsItems.push({ title, url});
       });
       res.send(newsItems);
-      
+
     })
     .catch((err) => console.log(err));
 });
