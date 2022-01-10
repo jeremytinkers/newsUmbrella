@@ -10,10 +10,9 @@ function App() {
     async function fetchData() {
       console.log("fetching...");
       try {
-        const response = await axios.get("http://localhost:5000/results/");
+        const response = await axios.get("http://localhost:5000/techcrunch");
         setNewsData(response.data);
         console.log(response.data);
-
       } catch (error) {
         console.log(error.message);
       }
@@ -24,12 +23,9 @@ function App() {
 
   return (
     <div>
-    {
-      newsData.map((curData)=>{
-        return <Card title={curData.title}  url={curData.url}/>;
-      })
-    }
-      
+      {newsData.map((curData) => {
+        return <Card title={curData.title} url={curData.url} />;
+      })}
     </div>
   );
 }
