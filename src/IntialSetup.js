@@ -1,6 +1,6 @@
 // import { useHistory } from "react-router-dom";
 import { useState } from "react";
-import { Button, Form, Grid, Select } from "semantic-ui-react";
+import { Button, Form, Select } from "semantic-ui-react";
 
 var name = "";
 var preference = "";
@@ -26,39 +26,44 @@ export default function IntialSetup(props) {
 
   const [loading, setLoading] = useState(false);
 
+  function stallFn() {
+    setLoading(false);
+    props.changePreference(preference);
+    props.changeSetup(true);
+  }
+
   function submitInitials() {
     //store in localStorage
     setLoading(true);
     try {
       localStorage.setItem("name", name);
       localStorage.setItem("preference", preference);
-      props.changeSetup(true);
+      setTimeout(stallFn, 3000);
     } catch (error) {
       console.log(error.message);
     }
+    setLoading(false);
   }
 
   return (
     <div className="intialForm">
-    
-          <Form>
-            <Form.Field>
-              <label>Name</label>
-              <input onChange={handleName} placeholder="First Name" />
-            </Form.Field>
-            <Form.Field>
-              <label>Preference</label>
-              <Select
-                onChange={handlePref}
-                placeholder="Select your preference"
-                options={countryOptions}
-              />
-            </Form.Field>
-            <Button secondary loading={loading} onClick={submitInitials}>
-              Submit
-            </Button>
-          </Form>
-   
+      <Form>
+        <Form.Field>
+          <label>Name</label>
+          <input onChange={handleName} placeholder="First Name" />
+        </Form.Field>
+        <Form.Field>
+          <label>Preference</label>
+          <Select
+            onChange={handlePref}
+            placeholder="Select your preference"
+            options={countryOptions}
+          />
+        </Form.Field>
+        <Button secondary loading={loading} onClick={submitInitials}>
+          Submit
+        </Button>
+      </Form>
     </div>
   );
 }

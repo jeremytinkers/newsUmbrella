@@ -7,6 +7,36 @@ import MenuButtons1 from "./MenuButtons1";
 import IntialSetup from "./IntialSetup";
 // import IntialSetup from "./IntialSetup";
 
+function randomGenerator() {
+  //Not a purist random generator but it should suffice for now
+  var arr = [];
+  while (arr.length < 3) {
+    var r = Math.floor(Math.random() * 7);
+    if (arr.indexOf(r) === -1) arr.push(r);
+  }
+  return arr.map((curI) => {
+    return srcList[curI];
+  });
+}
+
+const srcList = [
+  "wired", //0
+  "techcrunch",
+  "bbcnews", //2
+  "guardian",
+  "muscatdaily", //4
+  "mint", //5
+  "marketwatch",
+];
+
+const domainsSet = {
+  tech: ["wired", "techcrunch"],
+  general: ["bbcnews", "guardian"],
+  local: ["muscatdaily"],
+  finance: ["mint", "marketwatch"],
+  random: randomGenerator(),
+};
+
 function App() {
   const [newsData, setNewsData] = useState([]);
   const [feedTitle, setFeedTitle] = useState("Not assigned");
@@ -16,45 +46,17 @@ function App() {
 
   let setupDoneBefore = false;
 
-  if (localStorage.getItem("name") && localStorage.getItem("name")) {
+  if (localStorage.getItem("name") && localStorage.getItem("preference")) {
     setupDoneBefore = true;
   }
 
   const [setupDone, setSetupDone] = useState(setupDoneBefore);
 
-  const srcList = [
-    "wired", //0
-    "techcrunch",
-    "bbcnews", //2
-    "guardian",
-    "muscatdaily", //4
-    "mint", //5
-    "marketwatch",
-  ];
+  let preferenceBefore = localStorage.getItem("preference")
+    ? localStorage.getItem("preference")
+    : "tech";
 
-  const domainsSet = {
-    tech: ["wired", "techcrunch"],
-    general: ["bbcnews", "guardian"],
-    local: ["muscatdaily"],
-    finance: ["mint", "marketwatch"],
-  };
-
-  // const [wired, setWired] = useState([]);
-  // const [techcrunch, setTechcrunch] = useState([]);
-  // const [guardian, setGuardian] = useState([]);
-  // const [bbcnews, setBbcnews] = useState([]);
-  // const [mint, setMint] = useState([]);
-  // const [marketwatch, setMarketwatch] = useState([]);
-  // const [timesofoman, setTimesofoman] = useState([]);
-  // const [muscatdaily, setMuscatdaily] = useState([]);
-  //load  and disaply the recommeded displayRequest presettign for the user first
-  //then as he looks at his preferred newsfeed , load everything else in the background
-
-
-  let displayRequest = "Jeremiah";
-  let preferredDomain = "tech";
-
-  
+  const [preferredDomain, setPreferredDomain] = useState(preferenceBefore);
 
   useEffect(() => {
     const srcList = [
@@ -113,7 +115,7 @@ function App() {
 
     fetchDataPreferred(preferredDomain);
     fetchDataAll(srcList);
-  }, []);
+  }, [preferredDomain]);
 
   function renderCards() {
     const items = newsData.map((curArticle) => {
@@ -151,7 +153,6 @@ function App() {
     for (let i = 0; i < domainsSet[domainReq].length; i++) {
       tempNews = tempNews.concat(data[srcIndex(domainsSet[domainReq][i])]);
     }
-
     setNewsData(tempNews);
     setFeedTitle(domainReq);
   }
@@ -236,6 +237,9 @@ function App() {
                         </Button>
                       );
                     })}
+                    <Button onClick={() => selectDomainNews("random")}>
+                      Random
+                    </Button>
                   </Button.Group>
                 </Grid.Column>
               </Grid>
@@ -243,7 +247,11 @@ function App() {
           </div>
         </div>
       ) : (
-        <IntialSetup changeSetup={setSetupDone} />
+        <IntialSetup
+          changePreference={setPreferredDomain}
+          changeDomainNews={selectDomainNews}
+          changeSetup={setSetupDone}
+        />
       )}
     </div>
   );
@@ -258,3 +266,14 @@ export default App;
 //       selectDomainNews = {() => {selectDomainNews("local")}}
 //       financeSize={data[5].length + data[6].length}
 //     /> */}
+
+// const [wired, setWired] = useState([]);
+// const [techcrunch, setTechcrunch] = useState([]);
+// const [guardian, setGuardian] = useState([]);
+// const [bbcnews, setBbcnews] = useState([]);
+// const [mint, setMint] = useState([]);
+// const [marketwatch, setMarketwatch] = useState([]);
+// const [timesofoman, setTimesofoman] = useState([]);
+// const [muscatdaily, setMuscatdaily] = useState([]);
+//load  and disaply the recommeded displayRequest presettign for the user first
+//then as he looks at his preferred newsfeed , load everything else in the background
