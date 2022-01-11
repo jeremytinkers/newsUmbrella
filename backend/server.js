@@ -39,6 +39,7 @@ app.get("/guardian", (req, res) => {
         newsItems.push({
           title,
           url,
+          src: "Guardian",
         });
       });
       res.json(newsItems);
@@ -61,7 +62,7 @@ app.get("/bbcnews", (req, res) => {
         const baseElement = $(this).find("a.gs-c-promo-heading");
         const title = baseElement.find("h3").text();
         const url = baseElement.attr("href");
-        newsItems.push({ title, url: resolvePath(url, urlParent) });
+        newsItems.push({ title, url: resolvePath(url, urlParent), src: "BBC" });
       });
       res.send(newsItems);
     })
@@ -78,11 +79,12 @@ app.get("/mint", (req, res) => {
 
       $("h2.headline").each(function () {
         const title = $(this).text();
-        console.log(title.replace(/\n/g, ""));
+        // console.log(title.replace(/\n/g, ""));
         const url = $(this).find("a").attr("href");
         newsItems.push({
           title,
           url,
+          src: "Mint",
         });
       });
       res.json(newsItems);
@@ -102,7 +104,7 @@ app.get("/marketwatch", (req, res) => {
         const baseElement = $(this);
         const title = baseElement.find(".headline").text();
         const url = baseElement.attr("href");
-        newsItems.push({ title, url });
+        newsItems.push({ title, url , src: "MarketWatch" });
       });
 
       $("h3.article__headline").each(function () {
@@ -111,7 +113,7 @@ app.get("/marketwatch", (req, res) => {
         const title = baseElement.text();
         const url = baseElement.find("a").attr("href");
         if (validateData(url, title)) {
-          newsItems.push({ title, url });
+          newsItems.push({ title, url, src: "MarketWatch" });
         }
       });
 
@@ -133,7 +135,7 @@ app.get("/techcrunch", (req, res) => {
         const baseElement = $(this);
         const title = baseElement.text();
         const url = baseElement.find("a").attr("href");
-        newsItems.push({ title, url });
+        newsItems.push({ title, url, src: "TechCrunch" });
       });
       res.send(newsItems);
     })
@@ -154,7 +156,11 @@ app.get("/wired", (req, res) => {
         const title = baseElement.text();
         const url = baseElement.closest("a").attr("href");
         if (validateData(url, title)) {
-          newsItems.push({ title, url: resolvePath(url, urlParent) });
+          newsItems.push({
+            title,
+            url: resolvePath(url, urlParent),
+            src: "Wired",
+          });
         }
       });
       res.send(newsItems);
@@ -176,7 +182,11 @@ app.get("/timesofoman", (req, res) => {
         const baseElement = $(this);
         const title = baseElement.text();
         const url = baseElement.find("a").attr("href");
-        newsItems.push({ title, url: resolvePath(url, urlParent) });
+        newsItems.push({
+          title,
+          url: resolvePath(url, urlParent),
+          src: "Times of Oman",
+        });
       });
       res.send(newsItems);
     })
@@ -197,7 +207,7 @@ app.get("/muscatdaily", (req, res) => {
         const title = baseElement.text();
         const url = baseElement.siblings("a").attr("href");
         if (validateData(url, title)) {
-          newsItems.push({ title, url });
+          newsItems.push({ title, url, src: "Muscat Daily" });
         }
       });
       res.send(newsItems.slice(1));
