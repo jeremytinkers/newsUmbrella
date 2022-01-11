@@ -1,15 +1,26 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Card, Grid, Message } from "semantic-ui-react";
+import { Button, Card, Form, Grid, Message, Select } from "semantic-ui-react";
 import MenuButtons from "./MenuButtons1";
 import MenuButtons1 from "./MenuButtons1";
+import IntialSetup from "./IntialSetup";
+// import IntialSetup from "./IntialSetup";
 
 function App() {
   const [newsData, setNewsData] = useState([]);
+  const [feedTitle, setFeedTitle] = useState("Not assigned");
   const [data, setData] = useState([]);
 
   let c = 0;
+
+  let setupDoneBefore = false;
+
+  if (localStorage.getItem("name") && localStorage.getItem("name")) {
+    setupDoneBefore = true;
+  }
+
+  const [setupDone, setSetupDone] = useState(setupDoneBefore);
 
   const srcList = [
     "wired", //0
@@ -36,11 +47,14 @@ function App() {
   // const [marketwatch, setMarketwatch] = useState([]);
   // const [timesofoman, setTimesofoman] = useState([]);
   // const [muscatdaily, setMuscatdaily] = useState([]);
-
-  let displayRequest = "Jeremiah";
-  let preferred = "muscatdaily";
   //load  and disaply the recommeded displayRequest presettign for the user first
   //then as he looks at his preferred newsfeed , load everything else in the background
+
+
+  let displayRequest = "Jeremiah";
+  let preferredDomain = "tech";
+
+  
 
   useEffect(() => {
     const srcList = [
@@ -53,20 +67,31 @@ function App() {
       "marketwatch",
     ];
 
+    const domainsSet = {
+      tech: ["wired", "techcrunch"],
+      general: ["bbcnews", "guardian"],
+      local: ["muscatdaily"],
+      finance: ["mint", "marketwatch"],
+    };
+
     //template fetch Data call
-    async function fetchData(source) {
-      console.log(`fetching...${source} `);
+    async function fetchDataPreferred(domain) {
+      console.log(`fetching...${domain} `);
       try {
-        const response = await axios.get(`http://localhost:5000/${source}`);
-        setNewsData(response.data);
-        console.log(newsData);
+        let tempPreferred = [];
+        for (const curSource of domainsSet[domain]) {
+          console.log(`fetching..idomain...${curSource} `);
+          const response = await axios.get(
+            `http://localhost:5000/${curSource}`
+          );
+          tempPreferred = tempPreferred.concat(response.data);
+        }
+        // console.log(tempPreferred);
+        setNewsData(tempPreferred);
+        setFeedTitle("Preferred");
       } catch (error) {
         console.log(error.message);
       }
-    }
-
-    function fetchDataPreferred() {
-      fetchData("guardian");
     }
 
     async function fetchDataAll(srcList) {
@@ -86,7 +111,7 @@ function App() {
       }
     }
 
-    fetchDataPreferred();
+    fetchDataPreferred(preferredDomain);
     fetchDataAll(srcList);
   }, []);
 
@@ -118,6 +143,7 @@ function App() {
 
   function showSelected(requestSrc) {
     setNewsData(data[srcIndex(requestSrc)]);
+    setFeedTitle(requestSrc);
   }
 
   function selectDomainNews(domainReq) {
@@ -127,91 +153,98 @@ function App() {
     }
 
     setNewsData(tempNews);
+    setFeedTitle(domainReq);
   }
-
+  let loading = true;
   return (
     <div>
-      <div>
-        {data.length === srcList.length ? (
-        <div className="menuButtons">
-            <Button
-              color="black"
-              content="Local"
-              label={{
-                basic: true,
-                color: "black",
-                pointing: "left",
-                content: data[4].length,
-              }}
-              onClick={() => selectDomainNews("local")}
-            />
-            <Button
-              color="black"
-              content="General"
-              label={{
-                basic: true,
-                color: "black",
-                pointing: "left",
-                content: data[2].length + data[3].length,
-              }}
-              onClick={() => selectDomainNews("general")}
-            />
+      {setupDone ? (
+        <div className="homeScreen">
+          <div>
+            {data.length === srcList.length ? (
+              <div className="menuButtons">
+                <Button
+                  color="black"
+                  content="Local"
+                  label={{
+                    basic: true,
+                    color: "black",
+                    pointing: "left",
+                    content: data[4].length,
+                  }}
+                  onClick={() => selectDomainNews("local")}
+                />
+                <Button
+                  color="black"
+                  content="General"
+                  label={{
+                    basic: true,
+                    color: "black",
+                    pointing: "left",
+                    content: data[2].length + data[3].length,
+                  }}
+                  onClick={() => selectDomainNews("general")}
+                />
 
-            <Button
-              color="black"
-              content="Tech"
-              label={{
-                basic: true,
-                color: "black",
-                pointing: "left",
-                content: data[0].length + data[1].length,
-              }}
-              onClick={() => selectDomainNews("tech")}
-            />
-            <Button
-              color="black"
-              content="Finance"
-              label={{
-                basic: true,
-                color: "black",
-                pointing: "left",
-                content: data[5].length + data[6].length,
-              }}
-              onClick={() => selectDomainNews("finance")}
-            />
+                <Button
+                  color="black"
+                  content="Tech"
+                  label={{
+                    basic: true,
+                    color: "black",
+                    pointing: "left",
+                    content: data[0].length + data[1].length,
+                  }}
+                  onClick={() => selectDomainNews("tech")}
+                />
+                <Button
+                  color="black"
+                  content="Finance"
+                  label={{
+                    basic: true,
+                    color: "black",
+                    pointing: "left",
+                    content: data[5].length + data[6].length,
+                  }}
+                  onClick={() => selectDomainNews("finance")}
+                />
+              </div>
+            ) : (
+              <MenuButtons
+                techSize="Loading"
+                generalSize="Loading"
+                localSize="Loading"
+                financeSize="Loading"
+              />
+            )}
+
+            <h1>{feedTitle}</h1>
+            <div className="gridParent">
+              <Grid>
+                <Grid.Column width={9}>{renderCards()}</Grid.Column>
+                <Grid.Column width={4}>
+                  {" "}
+                  <Button.Group vertical>
+                    {srcList.map((curSrc) => {
+                      return (
+                        <Button
+                          onClick={() => {
+                            showSelected(curSrc);
+                          }}
+                        >
+                          {curSrc.toUpperCase()}
+                        </Button>
+                      );
+                    })}
+                  </Button.Group>
+                </Grid.Column>
+              </Grid>
+            </div>
           </div>
-        ) : (
-          <MenuButtons
-            techSize="Loading"
-            generalSize="Loading"
-            localSize="Loading"
-            financeSize="Loading"
-          />
-        )}
-
-        <h1>For {displayRequest}</h1>
-        <div className="gridParent">
-          <Grid>
-            <Grid.Column width={9}>{renderCards()}</Grid.Column>
-            <Grid.Column width={4}>
-              {" "}
-              <Button.Group vertical>
-                {srcList.map((curSrc) => {
-                  return (
-                    <Button
-                      onClick={() => {
-                        showSelected(curSrc);
-                      }}
-                    >
-                      {curSrc.toUpperCase()}
-                    </Button>
-                  );
-                })}
-              </Button.Group>
-            </Grid.Column>
-          </Grid>
         </div>
-      </div>
+      ) : (
+        <IntialSetup changeSetup={setSetupDone} />
+      )}
     </div>
   );
 }
