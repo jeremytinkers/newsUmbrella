@@ -143,9 +143,12 @@ function App() {
     }
   }
 
+  function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
   function showSelected(requestSrc) {
     setNewsData(data[srcIndex(requestSrc)]);
-    setFeedTitle(requestSrc);
+    setFeedTitle(capitalizeFirstLetter(requestSrc));
   }
 
   function selectDomainNews(domainReq) {
@@ -154,7 +157,7 @@ function App() {
       tempNews = tempNews.concat(data[srcIndex(domainsSet[domainReq][i])]);
     }
     setNewsData(tempNews);
-    setFeedTitle(domainReq);
+    setFeedTitle(capitalizeFirstLetter(domainReq));
   }
   let loading = true;
   return (
@@ -219,28 +222,33 @@ function App() {
               />
             )}
 
-            <h1>{feedTitle}</h1>
             <div className="gridParent">
               <Grid>
-                <Grid.Column width={9}>{renderCards()}</Grid.Column>
-                <Grid.Column width={4}>
-                  {" "}
-                  <Button.Group vertical>
-                    {srcList.map((curSrc) => {
-                      return (
-                        <Button
-                          onClick={() => {
-                            showSelected(curSrc);
-                          }}
-                        >
-                          {curSrc.toUpperCase()}
-                        </Button>
-                      );
-                    })}
-                    <Button onClick={() => selectDomainNews("random")}>
-                      RANDOM
-                    </Button>
-                  </Button.Group>
+                <Grid.Column width={3}></Grid.Column>
+                <Grid.Column width={7}>
+                  <h1>{feedTitle}</h1>
+                  {renderCards()}
+                </Grid.Column>
+                <Grid.Column width={6}>
+                  <div id="srcMenuButtons">
+                    <></>
+                    <Button.Group vertical>
+                      {srcList.map((curSrc) => {
+                        return (
+                          <Button
+                            onClick={() => {
+                              showSelected(curSrc);
+                            }}
+                          >
+                            {curSrc.toUpperCase()}
+                          </Button>
+                        );
+                      })}
+                      <Button onClick={() => selectDomainNews("random")}>
+                        RANDOM
+                      </Button>
+                    </Button.Group>
+                  </div>
                 </Grid.Column>
               </Grid>
             </div>

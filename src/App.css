@@ -1,8 +1,8 @@
-.card{
+.card {
   color: green;
 }
 
-.menuButtons{
+.menuButtons {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -10,17 +10,25 @@
   margin-bottom: 2em;
 }
 
-.gridSUI{
+.gridSUI {
   margin-left: 1em;
 }
 
-.gridParent{
+/* .gridParent{
   display: flex;
   justify-content: center;
+} */
 
-}
 .intialForm {
   display: flex;
   justify-content: center;
   margin-top: 20vh;
+}
+
+#srcMenuButtons {
+  margin-top: 2em;
+}
+
+h1 {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
