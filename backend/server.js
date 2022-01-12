@@ -48,21 +48,26 @@ app.get("/guardian", (req, res) => {
 });
 
 app.get("/bbcnews", (req, res) => {
-  const urlParent = "https://www.bbc.com/news";
-  axios(urlParent)
+  const urlParentActual = "https://www.bbc.com/news";
+  const urlParent = "https://www.bbc.com"; //breaks otherwise
+  axios(urlParentActual)
     .then((response) => {
       const html = response.data;
       const $ = cheerio.load(html);
       const newsItems = [];
 
-      $(
-        ".nw-c-top-stories__secondary-item,.nw-c-top-stories__tertiary-items"
-      ).each(function () {
+      $("a.gs-c-promo-heading").each(function () {
         // const title = $(this).text()
-        const baseElement = $(this).find("a.gs-c-promo-heading");
+        const baseElement = $(this);
         const title = baseElement.find("h3").text();
         const url = baseElement.attr("href");
-        newsItems.push({ title, url: resolvePath(url, urlParent), src: "BBC" });
+        if (validateData(title, url)) {
+          newsItems.push({
+            title,
+            url: resolvePath(url, urlParent),
+            src: "BBC",
+          });
+        }
       });
       res.send(newsItems);
     })
@@ -71,7 +76,8 @@ app.get("/bbcnews", (req, res) => {
 
 //finance
 app.get("/mint", (req, res) => {
-  axios("https://www.livemint.com/")
+  const urlParent = "https://www.livemint.com/";
+  axios(urlParent)
     .then((response) => {
       const html = response.data;
       const $ = cheerio.load(html);
@@ -83,7 +89,7 @@ app.get("/mint", (req, res) => {
         const url = $(this).find("a").attr("href");
         newsItems.push({
           title,
-          url,
+          url: resolvePath(url, urlParent),
           src: "Mint",
         });
       });
@@ -104,7 +110,7 @@ app.get("/marketwatch", (req, res) => {
         const baseElement = $(this);
         const title = baseElement.find(".headline").text();
         const url = baseElement.attr("href");
-        newsItems.push({ title, url , src: "MarketWatch" });
+        newsItems.push({ title, url, src: "MarketWatch" });
       });
 
       $("h3.article__headline").each(function () {

@@ -238,7 +238,7 @@ function App() {
                       );
                     })}
                     <Button onClick={() => selectDomainNews("random")}>
-                      Random
+                      RANDOM
                     </Button>
                   </Button.Group>
                 </Grid.Column>
