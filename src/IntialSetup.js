@@ -13,7 +13,7 @@ export default function IntialSetup(props) {
     { key: "gen", value: "general", text: "General" },
     { key: "loc", value: "local", text: "Local" },
     { key: "fin", value: "finance", text: "Finance" },
-    { key: "rand", value: "random", text: "Random" },
+    // { key: "rand", value: "random", text: "Random" },
   ];
 
   function handlePref(e, data) {
@@ -38,7 +38,7 @@ export default function IntialSetup(props) {
     try {
       localStorage.setItem("name", name);
       localStorage.setItem("preference", preference);
-      setTimeout(stallFn, 3000);
+      setTimeout(stallFn, 1000);
     } catch (error) {
       console.log(error.message);
     }

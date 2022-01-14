@@ -2,10 +2,9 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Button, Card, Form, Grid, Message, Select } from "semantic-ui-react";
-import MenuButtons from "./MenuButtons1";
-import MenuButtons1 from "./MenuButtons1";
+import MenuButtons from "./coreComponents/MenuButtons";
 import IntialSetup from "./IntialSetup";
-// import IntialSetup from "./IntialSetup";
+
 
 function randomGenerator() {
   //Not a purist random generator but it should suffice for now
@@ -168,11 +167,11 @@ function App() {
             {data.length === srcList.length ? (
               <div className="menuButtons">
                 <Button
-                  color="black"
+                  color="red"
                   content="Local"
                   label={{
                     basic: true,
-                    color: "black",
+                    color: "red",
                     pointing: "left",
                     content: data[4].length,
                   }}
@@ -191,22 +190,22 @@ function App() {
                 />
 
                 <Button
-                  color="black"
+                  color="green"
                   content="Tech"
                   label={{
                     basic: true,
-                    color: "black",
+                    color: "green",
                     pointing: "left",
                     content: data[0].length + data[1].length,
                   }}
                   onClick={() => selectDomainNews("tech")}
                 />
                 <Button
-                  color="black"
+                  color="blue"
                   content="Finance"
                   label={{
                     basic: true,
-                    color: "black",
+                    color: "blue",
                     pointing: "left",
                     content: data[5].length + data[6].length,
                   }}
